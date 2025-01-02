@@ -1,78 +1,40 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { Listbox } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Combobox } from '@headlessui/react';
+import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/20/solid';
 import { FixedSizeList as List } from 'react-window';
-import { GoogleFont } from '../types/font';
-import { POPULAR_FONTS, loadGoogleFont } from '../utils/fonts';
+import { useGoogleFonts } from '../hooks/useGoogleFonts';
+import { loadGoogleFont } from '../utils/fonts';
 
 interface FontSelectorProps {
   selectedFont: string;
   onFontChange: (font: string) => void;
+  allowInherit?: boolean;
 }
 
 const ITEM_HEIGHT = 40;
 const LISTBOX_HEIGHT = 300;
 const LOAD_AHEAD = 10;
 
-export function FontSelector({ selectedFont, onFontChange }: FontSelectorProps) {
-  const [fonts, setFonts] = useState<GoogleFont[]>(
-    [...POPULAR_FONTS].sort((a, b) => a.family.localeCompare(b.family))
-  );
+export function FontSelector({ selectedFont, onFontChange, allowInherit = false }: FontSelectorProps) {
   const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
+  const { fonts, isLoading, error } = useGoogleFonts();
+  const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set([selectedFont]));
   const listRef = useRef<List>(null);
-  const [isOpen, setIsOpen] = useState(false);
 
+  // Carica il font selezionato inizialmente
   useEffect(() => {
-    const loadFonts = async () => {
-      try {
-        const apiKey = import.meta.env.VITE_GOOGLE_FONTS_API_KEY;
-        const response = await fetch(
-          `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&sort=alpha`
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch fonts');
-        }
-        
-        const data = await response.json();
-        if (data.items && Array.isArray(data.items)) {
-          setFonts(data.items);
-          loadGoogleFont(selectedFont);
-          setLoadedFonts(new Set([selectedFont]));
-          setError(null);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (error) {
-        console.error('Error fetching fonts:', error);
-        setError('Failed to load all fonts. Showing popular fonts only.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadFonts();
-  }, [selectedFont]);
+    if (selectedFont && selectedFont !== 'inherit') {
+      loadGoogleFont(selectedFont);
+    }
+  }, []);
 
   const filteredFonts = useMemo(() => {
-    return query === ''
-      ? fonts
-      : fonts.filter((font) =>
-          font.family.toLowerCase().includes(query.toLowerCase())
-        );
-  }, [fonts, query]);
-
-  const handleFontChange = (font: string) => {
-    if (font !== selectedFont) {
-      loadGoogleFont(font);
-      setLoadedFonts(prev => new Set(prev).add(font));
-      onFontChange(font);
-      setQuery('');
-    }
-  };
+    const options = allowInherit ? ['inherit', ...fonts] : fonts;
+    if (!query) return options;
+    return options.filter((font) =>
+      font.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [fonts, query, allowInherit]);
 
   const loadVisibleFonts = (startIndex: number, stopIndex: number) => {
     const start = Math.max(0, startIndex - LOAD_AHEAD);
@@ -80,10 +42,21 @@ export function FontSelector({ selectedFont, onFontChange }: FontSelectorProps) 
     
     for (let i = start; i < stop; i++) {
       const font = filteredFonts[i];
-      if (font && !loadedFonts.has(font.family)) {
-        loadGoogleFont(font.family);
-        setLoadedFonts(prev => new Set(prev).add(font.family));
+      if (font && font !== 'inherit' && !loadedFonts.has(font)) {
+        loadGoogleFont(font);
+        setLoadedFonts(prev => new Set(prev).add(font));
       }
+    }
+  };
+
+  const handleFontChange = (font: string) => {
+    if (font !== selectedFont) {
+      if (font !== 'inherit') {
+        loadGoogleFont(font);
+        setLoadedFonts(prev => new Set(prev).add(font));
+      }
+      onFontChange(font);
+      setQuery('');
     }
   };
 
@@ -91,156 +64,118 @@ export function FontSelector({ selectedFont, onFontChange }: FontSelectorProps) 
     const font = filteredFonts[index];
     if (!font) return null;
 
-    const isFontLoaded = loadedFonts.has(font.family);
-    const isSelected = font.family === selectedFont;
+    const isFontLoaded = loadedFonts.has(font) || font === 'inherit';
 
     return (
-      <Listbox.Option
-        key={font.family}
-        value={font.family}
-        className={({ active }) =>
-          `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-            active ? 'bg-indigo-50' : ''
-          } ${isSelected ? 'bg-indigo-50' : ''}`
-        }
-        style={style}
-      >
-        <span
-          className={`block truncate ${
-            isSelected ? 'font-medium' : 'font-normal'
-          }`}
-          style={{ 
-            fontFamily: isFontLoaded ? font.family : 'system-ui',
-            opacity: isFontLoaded ? 1 : 0.7
-          }}
+      <div style={style} className="relative">
+        <Combobox.Option
+          key={font}
+          value={font}
+          className={({ active }) =>
+            `w-full py-2 pl-10 pr-4 cursor-pointer ${
+              active ? 'bg-indigo-600 text-white' : 'text-gray-900'
+            }`
+          }
         >
-          {font.family}
-        </span>
-        {isSelected && (
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-600">
-            <CheckIcon className="h-5 w-5" aria-hidden="true" />
-          </span>
-        )}
-      </Listbox.Option>
+          {({ selected, active }) => (
+            <div className="flex items-center">
+              {selected && (
+                <div
+                  className={`flex items-center absolute left-0 top-0 bottom-0 pl-3 ${
+                    active ? 'text-white' : 'text-indigo-600'
+                  }`}
+                >
+                  <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                </div>
+              )}
+              <span
+                className={`truncate ${selected ? 'font-medium' : 'font-normal'}`}
+                style={{ 
+                  fontFamily: font === 'inherit' ? 'inherit' : font,
+                  opacity: isFontLoaded ? 1 : 0.7
+                }}
+              >
+                {font}
+              </span>
+            </div>
+          )}
+        </Combobox.Option>
+      </div>
     );
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    if (listRef.current) {
-      listRef.current.scrollTo(0);
-    }
-  };
-
-  const handleItemsRendered = ({ visibleStartIndex, visibleStopIndex }: { visibleStartIndex: number; visibleStopIndex: number }) => {
-    loadVisibleFonts(visibleStartIndex, visibleStopIndex);
-  };
-
-  // Effetto per gestire lo scroll quando il dropdown si apre
-  useEffect(() => {
-    if (isOpen && listRef.current && !query) {
-      // Piccolo timeout per assicurarsi che il dropdown sia completamente renderizzato
-      setTimeout(() => {
-        const selectedIndex = filteredFonts.findIndex(font => font.family === selectedFont);
-        if (selectedIndex !== -1) {
-          const scrollPosition = selectedIndex * ITEM_HEIGHT;
-          listRef.current?.scrollTo(scrollPosition);
-        }
-      }, 0);
-    }
-  }, [isOpen, selectedFont, filteredFonts, query]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Previene la propagazione dell'evento spazio per evitare la chiusura del dropdown
-    if (e.code === 'Space') {
-      e.stopPropagation();
-    }
-  };
-
   return (
-    <div className="relative w-full">
-      <Listbox 
-        value={selectedFont} 
-        onChange={handleFontChange}
-      >
-        {({ open }) => {
-          // Aggiorna lo stato isOpen quando cambia open
-          if (open !== isOpen) {
-            setIsOpen(open);
-          }
-
-          return (
-            <div className="relative">
-              <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-white py-2 pl-3 pr-10 text-left border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <span className="block truncate text-sm" style={{ fontFamily: selectedFont }}>
-                  {selectedFont}
-                </span>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                  <ChevronUpDownIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </span>
-              </Listbox.Button>
-
-              {open && (
-                <Listbox.Options 
-                  className="absolute z-10 mt-1 w-full overflow-hidden rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                  static
-                >
-                  <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-3 py-2">
-                    <div className="relative">
-                      <MagnifyingGlassIcon 
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" 
-                        aria-hidden="true"
-                      />
-                      <input
-                        type="text"
-                        className="block w-full rounded-md border-0 py-1.5 pl-9 pr-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="Search fonts..."
-                        value={query}
-                        onChange={handleSearch}
-                        onClick={(e) => e.stopPropagation()}
-                        onKeyDown={handleKeyDown}
-                      />
+    <div className="relative">
+      <Combobox value={selectedFont} onChange={handleFontChange}>
+        {({ open }) => (
+          <>
+            <div className="relative cursor-pointer">
+              <Combobox.Button className="w-full">
+                <div className="block w-full py-2 pl-3 pr-10 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-left">
+                  <span style={{ fontFamily: selectedFont === 'inherit' ? 'inherit' : selectedFont }}>
+                    {selectedFont}
+                  </span>
+                </div>
+                <div className="absolute right-0 inset-y-0 flex items-center pointer-events-none">
+                  <div className="h-full flex items-center">
+                    <div className="px-2">
+                      <svg className="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
                     </div>
                   </div>
+                </div>
+              </Combobox.Button>
 
-                  {isLoading ? (
-                    <div className="px-4 py-2 text-sm text-gray-700">
-                      Loading fonts...
-                    </div>
-                  ) : filteredFonts.length === 0 ? (
-                    <div className="px-4 py-2 text-sm text-gray-700">
-                      No fonts found.
-                    </div>
-                  ) : (
-                    <div style={{ height: LISTBOX_HEIGHT }}>
-                      <List
-                        ref={listRef}
-                        height={LISTBOX_HEIGHT}
-                        itemCount={filteredFonts.length}
-                        itemSize={ITEM_HEIGHT}
-                        width="100%"
-                        overscanCount={5}
-                        onItemsRendered={handleItemsRendered}
-                        className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400"
-                      >
-                        {Row}
-                      </List>
-                    </div>
-                  )}
-                </Listbox.Options>
+              {open && (
+                <div className="absolute mt-1 w-full rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                  <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+                    <Combobox.Input
+                      className="w-full py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-0 sm:text-sm"
+                      placeholder="Search fonts..."
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                  <div className="overflow-hidden">
+                    <Combobox.Options static className="max-h-[300px]">
+                      {isLoading ? (
+                        <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                          Loading fonts...
+                        </div>
+                      ) : error ? (
+                        <div className="relative cursor-default select-none py-2 px-4 text-red-600">
+                          {error}
+                        </div>
+                      ) : filteredFonts.length === 0 ? (
+                        <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                          Nothing found.
+                        </div>
+                      ) : (
+                        <List
+                          ref={listRef}
+                          height={LISTBOX_HEIGHT}
+                          itemCount={filteredFonts.length}
+                          itemSize={ITEM_HEIGHT}
+                          width="100%"
+                          overscanCount={LOAD_AHEAD}
+                          onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
+                            loadVisibleFonts(visibleStartIndex, visibleStopIndex);
+                          }}
+                          className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400"
+                        >
+                          {Row}
+                        </List>
+                      )}
+                    </Combobox.Options>
+                  </div>
+                </div>
               )}
             </div>
-          );
-        }}
-      </Listbox>
-      {error && (
-        <div className="absolute -top-6 left-0 text-sm text-red-600">
-          {error}
-        </div>
-      )}
+          </>
+        )}
+      </Combobox>
     </div>
   );
 }
