@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from '../types';
-import { Monitor, Smartphone } from 'lucide-react';
+import { Monitor, AppleIcon, Smartphone } from 'lucide-react';
 
 interface PlatformSelectorProps {
   platform: Platform;
@@ -12,23 +12,30 @@ export const PlatformSelector: React.FC<PlatformSelectorProps> = ({
   onPlatformChange,
 }) => {
   return (
-    <div className="flex space-x-2 p-1 bg-gray-100 rounded-lg">
+    <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-full">
       {[
-        { id: 'desktop', icon: Monitor },
-        { id: 'ios', icon: Smartphone },
-        { id: 'android', icon: Smartphone },
-      ].map(({ id, icon: Icon }) => (
+        { id: 'desktop', icon: Monitor, label: 'Desktop' },
+        { id: 'ios', icon: AppleIcon, label: 'iOS' },
+        { id: 'android', icon: Smartphone, label: 'Android' },
+      ].map(({ id, icon: Icon, label }) => (
         <button
           key={id}
           onClick={() => onPlatformChange(id as Platform)}
-          className={`flex items-center px-4 py-2 rounded-md transition-colors ${
-            platform === id
-              ? 'bg-white shadow-sm text-indigo-600'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
+          className={`
+            flex items-center justify-center rounded-md transition-all
+            ${platform === id 
+              ? 'bg-white shadow-sm text-indigo-600 flex-[2] py-2'
+              : 'text-gray-600 hover:text-gray-900 flex-1 p-2'
+            }
+          `}
+          title={platform !== id ? label : undefined}
         >
-          <Icon className="w-4 h-4 mr-2" />
-          <span className="capitalize">{id}</span>
+          <Icon className="w-5 h-5 shrink-0" />
+          {platform === id && (
+            <span className="ml-2 text-sm font-medium truncate">
+              {label}
+            </span>
+          )}
         </button>
       ))}
     </div>

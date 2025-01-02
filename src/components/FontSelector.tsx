@@ -8,14 +8,14 @@ import { loadGoogleFont } from '../utils/fonts';
 interface FontSelectorProps {
   selectedFont: string;
   onFontChange: (font: string) => void;
-  allowInherit?: boolean;
+  disabled?: boolean;
 }
 
 const ITEM_HEIGHT = 40;
 const LISTBOX_HEIGHT = 300;
 const LOAD_AHEAD = 10;
 
-export function FontSelector({ selectedFont, onFontChange, allowInherit = false }: FontSelectorProps) {
+export function FontSelector({ selectedFont, onFontChange, disabled = false }: FontSelectorProps) {
   const [query, setQuery] = useState('');
   const { fonts, isLoading, error } = useGoogleFonts();
   const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set([selectedFont]));
@@ -29,12 +29,11 @@ export function FontSelector({ selectedFont, onFontChange, allowInherit = false 
   }, []);
 
   const filteredFonts = useMemo(() => {
-    const options = allowInherit ? ['inherit', ...fonts] : fonts;
-    if (!query) return options;
-    return options.filter((font) =>
+    if (!query) return fonts;
+    return fonts.filter((font) =>
       font.toLowerCase().includes(query.toLowerCase())
     );
-  }, [fonts, query, allowInherit]);
+  }, [fonts, query]);
 
   const loadVisibleFonts = (startIndex: number, stopIndex: number) => {
     const start = Math.max(0, startIndex - LOAD_AHEAD);
@@ -106,11 +105,11 @@ export function FontSelector({ selectedFont, onFontChange, allowInherit = false 
 
   return (
     <div className="relative">
-      <Combobox value={selectedFont} onChange={handleFontChange}>
+      <Combobox value={selectedFont} onChange={handleFontChange} disabled={disabled}>
         {({ open }) => (
           <>
             <div className="relative cursor-pointer">
-              <Combobox.Button className="w-full">
+              <Combobox.Button className={`w-full ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}>
                 <div className="block w-full py-2 pl-3 pr-10 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-left">
                   <span style={{ fontFamily: selectedFont === 'inherit' ? 'inherit' : selectedFont }}>
                     {selectedFont}
@@ -127,7 +126,7 @@ export function FontSelector({ selectedFont, onFontChange, allowInherit = false 
                 </div>
               </Combobox.Button>
 
-              {open && (
+              {open && !disabled && (
                 <div className="absolute mt-1 w-full rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
                   <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
                     <Combobox.Input
