@@ -1,5 +1,7 @@
 export type Platform = 'desktop' | 'ios' | 'android';
 
+export type Unit = 'REM' | 'PX' | 'PT';
+
 export interface TypeScale {
   element: string;
   type: 'heading' | 'body';
