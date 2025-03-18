@@ -9,7 +9,7 @@ export function Header() {
         </h1>
         <div className="flex items-center gap-4">
           <a
-            href="https://github.com/StudioMastro/TypographicScaleGenerator"
+            href="https://github.com/StudioMastro/type-scale-generator"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
