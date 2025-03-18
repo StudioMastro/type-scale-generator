@@ -384,11 +384,22 @@ export function SiteMockupPanel({
                 >
                   Our Features
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div
+                  className={
+                    deviceSize === "mobile"
+                      ? "flex flex-col space-y-12"
+                      : "grid grid-cols-1 md:grid-cols-3 gap-8"
+                  }
+                >
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="text-center mb-8 sm:mb-0">
-                      <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <div className="w-8 h-8 bg-indigo-500 rounded-full"></div>
+                    <div
+                      key={i}
+                      className={`text-center ${
+                        deviceSize === "mobile" ? "pb-8" : "mb-8 md:mb-0"
+                      }`}
+                    >
+                      <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div className="w-12 h-12 bg-indigo-500 rounded-full"></div>
                       </div>
                       <h3
                         style={{
@@ -428,15 +439,21 @@ export function SiteMockupPanel({
                 >
                   Pricing Plans
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div
+                  className={
+                    deviceSize === "mobile"
+                      ? "flex flex-col space-y-12"
+                      : "grid grid-cols-1 md:grid-cols-3 gap-8"
+                  }
+                >
                   {["Basic", "Pro", "Enterprise"].map((plan, index) => (
                     <div
                       key={plan}
                       className={`bg-white p-6 md:p-8 rounded-lg shadow-sm border border-gray-200 ${
                         index === 1
-                          ? "relative border-indigo-200 shadow-md mb-10 sm:mb-0"
-                          : "mb-8 sm:mb-0"
-                      }`}
+                          ? "relative border-indigo-200 shadow-md"
+                          : ""
+                      } ${deviceSize === "mobile" ? "" : "mb-8 md:mb-0"}`}
                     >
                       {index === 1 && (
                         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -528,11 +545,19 @@ export function SiteMockupPanel({
                 >
                   What Our Clients Say
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div
+                  className={
+                    deviceSize === "mobile"
+                      ? "flex flex-col space-y-12"
+                      : "grid grid-cols-1 md:grid-cols-2 gap-8"
+                  }
+                >
                   {[1, 2].map((i) => (
                     <div
                       key={i}
-                      className="p-6 md:p-8 bg-gray-50 rounded-lg mb-8 sm:mb-0"
+                      className={`p-6 md:p-8 bg-gray-50 rounded-lg ${
+                        deviceSize === "mobile" ? "" : "mb-8 md:mb-0"
+                      }`}
                     >
                       <div className="flex items-center mb-6">
                         <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-300 rounded-full mr-4"></div>
@@ -575,7 +600,7 @@ export function SiteMockupPanel({
             {/* Footer */}
             <div className="bg-gray-800 py-12">
               <div className="max-w-6xl mx-auto px-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div>
                     <h4
                       style={{
