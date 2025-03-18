@@ -1,37 +1,21 @@
 export type Platform = 'desktop' | 'ios' | 'android';
 
-export type ScalePreset = {
-  name: string;
-  ratios: number[];
-  baseSize: number;
-  elements: string[];
-};
+export type Unit = 'REM' | 'PX' | 'PT';
 
-export type FontPreview = {
-  family: string;
-  category: string;
-  variants: string[];
-};
-
-export type TypeScale = {
+export interface TypeScale {
   element: string;
+  type: 'heading' | 'body';
   size: number;
   lineHeight: number;
-  scaleFactor: number;
-};
+}
 
-export type ProgressiveScale = {
-  value: number;
-  name: string;
-};
-
-export const PROGRESSIVE_SCALES: ProgressiveScale[] = [
-  { value: 1.067, name: 'Minor Second' },
-  { value: 1.125, name: 'Major Second' },
-  { value: 1.200, name: 'Minor Third' },
-  { value: 1.250, name: 'Major Third' },
-  { value: 1.333, name: 'Perfect Fourth' },
-  { value: 1.414, name: 'Augmented Fourth' },
-  { value: 1.500, name: 'Perfect Fifth' },
-  { value: 1.618, name: 'Golden Ratio' }
+export const PROGRESSIVE_SCALES = [
+  { label: 'Minor Second (1.067)', value: 1.067 },
+  { label: 'Major Second (1.125)', value: 1.125 },
+  { label: 'Minor Third (1.2)', value: 1.2 },
+  { label: 'Major Third (1.25)', value: 1.25 },
+  { label: 'Perfect Fourth (1.333)', value: 1.333 },
+  { label: 'Augmented Fourth (1.414)', value: 1.414 },
+  { label: 'Perfect Fifth (1.5)', value: 1.5 },
+  { label: 'Golden Ratio (1.618)', value: 1.618 },
 ];
