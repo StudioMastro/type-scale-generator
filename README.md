@@ -1,107 +1,107 @@
 # Type Scale Generator
 
-Un'applicazione web interattiva per generare e visualizzare scale tipografiche per progetti web. Configura e personalizza facilmente la tua tipografia per creare gerarchie visive coerenti e armoniose.
+An interactive web application for generating and visualizing typographic scales for web projects. Easily configure and customize your typography to create consistent and harmonious visual hierarchies.
 
 ## 🌐 Demo
 
-Visita l'applicazione: [Type Scale Generator](https://studiomastro.github.io/type-scale-generator/)
+Visit the application: [Type Scale Generator](https://studiomastro.github.io/type-scale-generator/)
 
-![Screenshot dell'applicazione](https://via.placeholder.com/800x450?text=Type+Scale+Generator+Screenshot)
+![Application Screenshot](https://via.placeholder.com/800x450?text=Type+Scale+Generator+Screenshot)
 
-## ✨ Funzionalità
+## ✨ Features
 
-- **Generazione di scale tipografiche**: crea scale tipografiche basate su vari rapporti (quadrato minore, terza maggiore, quarta perfetta, ecc.)
-- **Anteprima in tempo reale**: visualizza istantaneamente gli effetti delle modifiche alla tipografia
-- **Personalizzazione font**: scegli tra vari font Google o utilizza font di sistema
-- **Controlli avanzati**: modifica dimensione base, unità di misura, rapporto, peso e altro ancora
-- **Anteprima sito web**: visualizza la tua scala tipografica applicata a un layout di sito web realistico
-- **Gestione responsive**: visualizza come la tipografia si adatta a diversi formati di dispositivi
-- **Esportazione**: possibilità di utilizzare le impostazioni direttamente nei tuoi progetti
+- **Typographic Scale Generation**: create typographic scales based on various ratios (minor second, major third, perfect fourth, etc.)
+- **Real-time Preview**: instantly see the effects of typography changes
+- **Font Customization**: choose from various Google fonts or use system fonts
+- **Advanced Controls**: modify base size, measurement units, ratio, weight, and more
+- **Website Preview**: see your typographic scale applied to a realistic website layout
+- **Responsive Management**: view how typography adapts to different device formats
+- **Export Options**: ability to use settings directly in your projects
 
-## 🚀 Tecnologie Utilizzate
+## 🚀 Technologies Used
 
-- [React](https://reactjs.org/) - Libreria UI
-- [TypeScript](https://www.typescriptlang.org/) - Supporto per il tipo statico
-- [Vite](https://vitejs.dev/) - Build tool e dev server
-- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utility-first
-- [Zustand](https://github.com/pmndrs/zustand) - Gestione dello stato
-- [Lucide React](https://lucide.dev/) - Icone
-- [WebFontLoader](https://github.com/typekit/webfontloader) - Caricamento di font web
-- [Tailwind Scrollbar](https://github.com/adoxography/tailwind-scrollbar) - Personalizzazione scrollbar
+- [React](https://reactjs.org/) - UI Library
+- [TypeScript](https://www.typescriptlang.org/) - Static type support
+- [Vite](https://vitejs.dev/) - Build tool and dev server
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Zustand](https://github.com/pmndrs/zustand) - State management
+- [Lucide React](https://lucide.dev/) - Icons
+- [WebFontLoader](https://github.com/typekit/webfontloader) - Web font loading
+- [Tailwind Scrollbar](https://github.com/adoxography/tailwind-scrollbar) - Scrollbar customization
 
-## 🛠️ Installazione e Sviluppo
+## 🛠️ Installation and Development
 
-### Prerequisiti
+### Prerequisites
 
-- Node.js (versione 18 o superiore)
-- npm o yarn
+- Node.js (version 18 or higher)
+- npm or yarn
 
-### Setup del progetto
+### Project Setup
 
 ```bash
-# Clona il repository
+# Clone the repository
 git clone https://github.com/StudioMastro/type-scale-generator.git
 cd type-scale-generator
 
-# Installa le dipendenze
+# Install dependencies
 npm install
-# oppure
+# or
 yarn install
 
-# Avvia il server di sviluppo
+# Start the development server
 npm run dev
-# oppure
+# or
 yarn dev
 ```
 
-L'applicazione sarà disponibile all'indirizzo `http://localhost:3000`.
+The application will be available at `http://localhost:3000`.
 
-### Comandi disponibili
+### Available Commands
 
-- `npm run dev` - Avvia il server di sviluppo
-- `npm run build` - Crea una build di produzione
-- `npm run lint` - Esegue il linting del codice
-- `npm run preview` - Anteprima della build di produzione
-- `npm run deploy` - Pubblica su GitHub Pages
+- `npm run dev` - Start the development server
+- `npm run build` - Create a production build
+- `npm run lint` - Run code linting
+- `npm run preview` - Preview the production build
+- `npm run deploy` - Publish to GitHub Pages
 
-## 📚 Come usare l'applicazione
+## 📚 How to Use the Application
 
-1. **Seleziona un font di base** dall'elenco dei font disponibili
-2. **Imposta la dimensione di base** del testo (solitamente la dimensione del corpo del testo)
-3. **Scegli un rapporto** per la scala tipografica
-4. **Personalizza ulteriori parametri** come peso del font, interlinea, ecc.
-5. **Visualizza l'anteprima** sia nella visualizzazione scala che nel mockup del sito
-6. **Alterna tra dispositivi** per verificare la responsività
+1. **Select a base font** from the list of available fonts
+2. **Set the base size** of the text (usually the size of the body text)
+3. **Choose a ratio** for the typographic scale
+4. **Customize additional parameters** such as font weight, line height, etc.
+5. **View the preview** in both the scale view and the site mockup
+6. **Toggle between devices** to check responsiveness
 
-## 📂 Struttura del Progetto
+## 📂 Project Structure
 
 ```
 src/
-├── components/       # Componenti UI
-├── hooks/            # Hook personalizzati
-├── store/            # Gestione dello stato (Zustand)
-├── types/            # Definizioni TypeScript
-├── utils/            # Funzioni di utilità
-├── App.tsx           # Componente principale
+├── components/       # UI Components
+├── hooks/            # Custom hooks
+├── store/            # State management (Zustand)
+├── types/            # TypeScript definitions
+├── utils/            # Utility functions
+├── App.tsx           # Main component
 └── main.tsx          # Entry point
 ```
 
-## 🤝 Contribuire
+## 🤝 Contributing
 
-I contributi sono benvenuti! Per favore, segui questi passi:
+Contributions are welcome! Please follow these steps:
 
-1. Fai il fork del repository
-2. Crea un branch per la tua feature (`git checkout -b feature/amazing-feature`)
-3. Fai commit delle tue modifiche (`git commit -m 'Aggiungi una nuova funzionalità'`)
-4. Pusha al branch (`git push origin feature/amazing-feature`)
-5. Apri una Pull Request
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add a new feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 Licenza
+## 📄 License
 
-Distribuito sotto la licenza MIT. Vedi `LICENSE` per ulteriori informazioni.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## 📬 Contatti
+## 📬 Contact
 
 Studio Mastro - [GitHub](https://github.com/StudioMastro)
 
-Link al progetto: [https://github.com/StudioMastro/type-scale-generator](https://github.com/StudioMastro/type-scale-generator)
+Project Link: [https://github.com/StudioMastro/type-scale-generator](https://github.com/StudioMastro/type-scale-generator)
