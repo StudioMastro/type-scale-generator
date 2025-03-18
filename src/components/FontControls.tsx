@@ -1,14 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FontSelector } from "./FontSelector";
-import {
-  FontSettings,
-  FontSmoothing,
-  TextAlign,
-  TextDecoration,
-  TextTransform,
-  FontStyle,
-} from "../types/font";
+import { FontSettings, FontSmoothing } from "../types/font";
+import type { TextTransform, TextDecoration } from "../types/font";
 import { useTypographyStore } from "../store/typography";
-import { Platform } from "../types";
 
 interface FontControlsProps {
   settings: FontSettings;
@@ -26,12 +20,17 @@ export function FontControls({
   const bodySettings = useTypographyStore((state) => state.bodySettings);
   const platform = useTypographyStore((state) => state.platform);
 
-  // Funzione per ottenere il valore effettivo quando è impostato su "inherit"
-  const getInheritedValue = (property: keyof FontSettings) => {
-    if (settings[property] === "inherit" && allowInherit) {
-      return bodySettings[property];
+  /**
+   * Funzione per ottenere il valore effettivo quando è impostato su "inherit"
+   * Questa funzione deve utilizzare "any" a causa della natura complessa di FontSettings
+   * in quanto alcune proprietà possono essere opzionali o avere tipi di unione
+   */
+  const getInheritedValue = (property: string): string => {
+    const value = (settings as any)[property];
+    if (value === "inherit" && allowInherit) {
+      return (bodySettings as any)[property];
     }
-    return settings[property];
+    return value;
   };
 
   // Aggiungiamo i controlli specifici per piattaforma dopo i controlli esistenti
@@ -39,9 +38,9 @@ export function FontControls({
     if (platform === "ios") {
       return (
         <>
-          <div className="mt-6 border-t border-gray-200 pt-6">
+          <div className="mt-8 pt-4 border-t-2 border-gray-200">
             <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">
-              iOS Specific
+              iOS Specific Settings
             </h3>
 
             <div>
@@ -105,9 +104,9 @@ export function FontControls({
     } else if (platform === "android") {
       return (
         <>
-          <div className="mt-6 border-t border-gray-200 pt-6">
+          <div className="mt-8 pt-4 border-t-2 border-gray-200">
             <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">
-              Android Specific
+              Android Specific Settings
             </h3>
 
             <div>
@@ -496,7 +495,9 @@ export function FontControls({
         </label>
         <select
           value={settings.textTransform || "none"}
-          onChange={(e) => onSettingsChange({ textTransform: e.target.value })}
+          onChange={(e) =>
+            onSettingsChange({ textTransform: e.target.value as TextTransform })
+          }
           className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
           <option value="none">None</option>
@@ -544,7 +545,11 @@ export function FontControls({
         </label>
         <select
           value={settings.textDecoration || "none"}
-          onChange={(e) => onSettingsChange({ textDecoration: e.target.value })}
+          onChange={(e) =>
+            onSettingsChange({
+              textDecoration: e.target.value as TextDecoration,
+            })
+          }
           className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
           <option value="none">None</option>
@@ -554,46 +559,48 @@ export function FontControls({
         </select>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Text Align
-        </label>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => onSettingsChange({ textAlign: "left" })}
-            className={`flex-1 py-2 px-3 border ${
-              settings.textAlign === "left"
-                ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                : "border-gray-300 text-gray-700 hover:bg-gray-50"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-          >
-            Left
-          </button>
-          <button
-            type="button"
-            onClick={() => onSettingsChange({ textAlign: "center" })}
-            className={`flex-1 py-2 px-3 border ${
-              settings.textAlign === "center"
-                ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                : "border-gray-300 text-gray-700 hover:bg-gray-50"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-          >
-            Center
-          </button>
-          <button
-            type="button"
-            onClick={() => onSettingsChange({ textAlign: "right" })}
-            className={`flex-1 py-2 px-3 border ${
-              settings.textAlign === "right"
-                ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                : "border-gray-300 text-gray-700 hover:bg-gray-50"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-          >
-            Right
-          </button>
+      {!allowInherit && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Text Align
+          </label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => onSettingsChange({ textAlign: "left" })}
+              className={`flex-1 py-2 px-3 border ${
+                settings.textAlign === "left"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+            >
+              Left
+            </button>
+            <button
+              type="button"
+              onClick={() => onSettingsChange({ textAlign: "center" })}
+              className={`flex-1 py-2 px-3 border ${
+                settings.textAlign === "center"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+            >
+              Center
+            </button>
+            <button
+              type="button"
+              onClick={() => onSettingsChange({ textAlign: "right" })}
+              className={`flex-1 py-2 px-3 border ${
+                settings.textAlign === "right"
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+            >
+              Right
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {renderPlatformSpecificControls()}
     </div>

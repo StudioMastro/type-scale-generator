@@ -88,18 +88,16 @@ export function TypeScaleControls({
           />
         </div>
 
-        {platform === "desktop" && (
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">
-              Headings
-            </h3>
-            <FontControls
-              settings={headingSettings}
-              onSettingsChange={onHeadingSettingsChange}
-              allowInherit
-            />
-          </div>
-        )}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">
+            Headings
+          </h3>
+          <FontControls
+            settings={headingSettings}
+            onSettingsChange={onHeadingSettingsChange}
+            allowInherit
+          />
+        </div>
       </div>
 
       <ResetConfirmationDialog
